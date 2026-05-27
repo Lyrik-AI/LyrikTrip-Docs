@@ -1,24 +1,24 @@
 ---
-title: "Security boundaries"
-description: "How anyagent separates agent-visible capabilities from server-controlled credentials, tools, and sandbox policy."
+title: "安全边界"
+description: "AnyAgent 如何分离 agent-visible capabilities 与 server-controlled credentials、tools、sandbox policy。"
 icon: "shield-check"
 ---
 
-anyagent's default security model is: agents can see resource references and invoke approved capabilities, but the server owns credentials, tool policy, sandbox routing, audit records, and sensitive injection.
+AnyAgent 的默认安全模型是：agent 可以看到资源引用并调用已批准的能力，但 server 拥有 credentials、tool policy、sandbox routing、audit records 和敏感注入逻辑。
 
 ## Boundary model
 
-| Boundary | Agent sees | Server owns |
+| 边界 | Agent 看到 | Server 控制 |
 | --- | --- | --- |
 | Credentials | `credential_id` references | Secret resolution and injection |
-| MCP servers | Tool surface and server names | Auth headers, token format, credential lookup |
-| Tools | Approved tool names | Tool policy, runtime routing, audit logging |
-| Command execution | `exec` capability if enabled | Sandbox backend, session filesystem, egress policy |
-| Storage | Stable IDs and resumable events | Session, Run, Event, locks, dedupe, retention |
+| MCP servers | Tool surface 和 server names | Auth headers、token format、credential lookup |
+| Tools | Approved tool names | Tool policy、runtime routing、audit logging |
+| Command execution | 启用后的 `exec` capability | Sandbox backend、session filesystem、egress policy |
+| Storage | Stable IDs 和 resumable events | Session、Run、Event、locks、dedupe、retention |
 
 ## Sandbox modes
 
-Use command execution only when the agent actually needs it.
+只有 agent 确实需要本地命令执行时，才启用 `exec`。
 
 ```yaml
 tools:
@@ -28,15 +28,15 @@ sandbox:
   mode: "local-unsafe"
 ```
 
-`local-unsafe` is for trusted local development. Production deployments should use an isolated backend such as `opensandbox` or `external`.
+`local-unsafe` 只适合可信本地开发。生产部署应使用隔离 backend，例如 `opensandbox` 或 `external`。
 
 <Warning>
-  A workspace that only uses MCP HTTP tools or `core.web_fetch` does not need local command execution. Keep sandbox policy disabled until a workflow requires it.
+  只使用 MCP HTTP tools 或 `core.web_fetch` 的 workspace 不需要本地命令执行。除非工作流确实需要，否则保持 sandbox disabled。
 </Warning>
 
 ## Credential references
 
-Keep secrets out of source-controlled files. MCP config should reference a server-side credential:
+Secrets 不进入源码配置。MCP config 应引用 server-side credential：
 
 ```json
 {
@@ -49,9 +49,23 @@ Keep secrets out of source-controlled files. MCP config should reference a serve
 }
 ```
 
-## Audit and policy documents
+## 安全边界图
 
-Use these repository documents as the detailed source of truth:
+```mermaid placement="top-left"
+flowchart TB
+    Agent[Agent loop] --> Ref[credential_id / tool name]
+    Ref --> Policy[Tool Policy]
+    Ref --> Vault[Credential Vault]
+    Vault --> Inject[Server-side injection]
+    Policy --> Runtime[Tool Runtime]
+    Inject --> Runtime
+    Runtime --> Audit[Audit log]
+    Runtime --> Sandbox[Sandbox backend]
+```
+
+## Audit 和 policy 真源
+
+详细设计以源仓这些文档为准：
 
 - `docs/security/security-threat-model.md`
 - `docs/security/credential-vault.md`

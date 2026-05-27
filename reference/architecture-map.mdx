@@ -1,37 +1,37 @@
 ---
-title: "Architecture map"
-description: "A public map from anyagent concepts to repository source documents and implementation areas."
+title: "架构索引"
+description: "从 AnyAgent 公开概念映射到源仓真源文档与实现目录。"
 icon: "map"
 ---
 
-Use this map to move from a public concept to the repository source document that owns the details.
+这张表用于从公开概念跳到源仓中真正拥有细节的文档和实现位置。
 
-## Core concepts
+## 核心概念映射
 
-| Concept | Source document | Implementation area |
+| 概念 | 源仓真源文档 | 实现区域 |
 | --- | --- | --- |
-| OpenAI-compatible API and SDK lanes | `docs/architecture/responses-api-sdk-and-server.md` | `packages/anyagent/src/anyagent/server`, `packages/anyagent/src/anyagent/agent_api_client.py` |
-| SDK public surface | `docs/architecture/sdk-public-surface.md` | `packages/anyagent/src/anyagent/types`, `packages/anyagent/src/anyagent/agent_api_client.py` |
-| Agent packs | `README.md`, `docs/architecture/roadmap.md` | `packages/anyagent/src/anyagent/agent_packs.py` |
-| Runtime entities | `docs/architecture/agent-server-runtime-entities.md` | `packages/anyagent/src/anyagent/storage`, `packages/anyagent/src/anyagent/gateway` |
-| Stateless service semantics | `docs/architecture/stateless-agent-service-architecture.md` | `packages/anyagent/src/anyagent/server`, `packages/anyagent/src/anyagent/storage` |
+| OpenAI-compatible API 与 SDK lanes | `docs/architecture/responses-api-sdk-and-server.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/agent_api_client.py` |
+| SDK public surface | `docs/architecture/sdk-public-surface.md` | `packages/anyagent/src/anyagent/types`、`packages/anyagent/src/anyagent/agent_api_client.py` |
+| Agent packs | `README.md`、`docs/architecture/roadmap.md` | `packages/anyagent/src/anyagent/agent_packs.py` |
+| Runtime entities | `docs/architecture/agent-server-runtime-entities.md` | `packages/anyagent/src/anyagent/storage`、`packages/anyagent/src/anyagent/gateway` |
+| Stateless service semantics | `docs/architecture/stateless-agent-service-architecture.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/storage` |
 | Storage contract | `docs/architecture/storage-minimal-design.md` | `packages/anyagent/src/anyagent/storage` |
 | Tool Runtime | `docs/architecture/skills-tool-runtime-interaction.md` | `packages/anyagent/src/anyagent/tool_runtime` |
 | Skills | `docs/architecture/decisions/skills-selection-policy.md` | `packages/anyagent/src/anyagent/skills` |
-| Security and credentials | `docs/security/*` | `packages/anyagent/src/anyagent/server/security` |
-| Sandbox policy | `docs/security/sandbox-security.md` | `packages/anyagent/src/anyagent/protocol/sandbox.py`, `packages/anyagent/src/anyagent/server/sandbox` |
-| Testing strategy | `docs/architecture/testing-strategy.md` | `tests/`, `scripts/ci/` |
+| Security 与 credentials | `docs/security/*` | `packages/anyagent/src/anyagent/server/security` |
+| Sandbox policy | `docs/security/sandbox-security.md` | `packages/anyagent/src/anyagent/protocol/sandbox.py`、`packages/anyagent/src/anyagent/server/sandbox` |
+| Testing strategy | `docs/architecture/testing-strategy.md` | `tests/`、`scripts/ci/` |
 
-## Work tracking
+## 工作追踪
 
-| Path | Use |
+| 路径 | 用途 |
 | --- | --- |
-| `requirements.md` | Requirements and constraints. |
-| `todo/*.md` | Current status, task evidence, and remaining work. |
-| `docs/_dev/**` | Drafts that have not graduated to stable docs. |
-| `docs/_notes/**` | Research notes, not source-of-truth contracts. |
+| `requirements.md` | Requirements and constraints。 |
+| `todo/*.md` | 当前状态、实现证据和剩余工作。 |
+| `docs/_dev/**` | 尚未毕业到 stable docs 的 drafts。 |
+| `docs/_notes/**` | Research notes，不作为 contract 真源。 |
 
-## Repository checks
+## 源仓检查命令
 
 ```bash
 python3 scripts/docs/index.py --root .

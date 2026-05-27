@@ -17,16 +17,17 @@
   "navigation": {
     "groups": [
       {
-        "group": "Start here",
+        "group": "开始",
         "icon": "rocket",
         "pages": [
           "index",
           "quickstart",
+          "concepts/architecture",
           "concepts/documentation-system"
         ]
       },
       {
-        "group": "Guides",
+        "group": "指南",
         "icon": "book-open",
         "pages": [
           "guides/configuration",
@@ -35,7 +36,7 @@
         ]
       },
       {
-        "group": "Reference",
+        "group": "参考",
         "icon": "map",
         "pages": [
           "reference/architecture-map",
@@ -57,7 +58,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Quickstart",
+      "label": "快速开始",
       "href": "/quickstart"
     }
   },

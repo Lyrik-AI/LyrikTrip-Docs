@@ -1,42 +1,45 @@
 ---
-title: "anyagent"
-description: "Configuration-first Agent Server core and SDK for OpenAI-compatible agent services."
+title: "AnyAgent"
+description: "配置化 Agent Server 内核与 SDK，用于构建 OpenAI-compatible 的 Agent 服务。"
 icon: "bot"
 ---
 
-anyagent is a configuration-first Agent Server core and SDK. It starts an OpenAI Responses API-compatible service from workspace files such as `AGENTS.md`, `agent.yaml`, and `mcp.json`, without requiring application teams to write their own server shell.
+AnyAgent 是一个**配置即服务**的 Agent Server core + SDK。你可以用 `AGENTS.md`、`agent.yaml`、`mcp.json` 等配置文件启动一个 OpenAI Responses API-compatible 的 Agent Server，而不需要为每个业务应用重复编写服务端壳。
 
 <Columns cols={2}>
-  <Card title="Start a workspace" icon="rocket" href="/quickstart">
-    Generate a minimal `.anyagent/` workspace, inspect it, and run a local Agent Server.
+  <Card title="快速启动 workspace" icon="rocket" href="/quickstart">
+    生成最小 `.anyagent/` 配置，检查 agent pack，并启动本地 Agent Server。
   </Card>
-  <Card title="Understand the docs system" icon="folders" href="/concepts/documentation-system">
-    See how the Mintlify publishing view relates to the repository's source-of-truth docs.
+  <Card title="理解系统架构" icon="network" href="/concepts/architecture">
+    看 AnyAgent 的配置层、Server Core、Tool Runtime、SDK 与安全边界如何协作。
   </Card>
 </Columns>
 
-## What anyagent provides
+## AnyAgent 提供什么
 
-- A built-in Agent Server with `POST /v1/responses` and streaming events.
-- A Python SDK with OpenAI-compatible access and anyagent-specific event helpers.
-- Agent packs under `.anyagent/agents/<agent_id>/` for instructions, tools, skills, MCP servers, sandbox policy, and multi-agent boundaries.
-- A server-managed security model where agents see resource references, while credentials and tool policy stay behind the server boundary.
-- A path from local in-process runtime to external storage, independent Tool Runtime, and production operation commands.
+- 内置 Agent Server：提供 `POST /v1/responses` 与 streaming events。
+- Python SDK：保留 OpenAI-compatible client 使用方式，同时提供 AnyAgent 精细事件能力。
+- Agent packs：在 `.anyagent/agents/<agent_id>/` 下声明指令、工具、skills、MCP servers、sandbox policy 和 multi-agent 边界。
+- Server-managed security：agent 只看到资源引用，credentials、tool policy、audit 和注入逻辑由 server 控制。
+- 渐进式生产路径：从本地 in-process runtime 逐步升级到 external storage、独立 Tool Runtime 和 ops commands。
 
 <Info>
-  This Mintlify site is the public reading layer. The engineering source of truth remains in `README.md`, `requirements.md`, `todo/*.md`, and `docs/**` in the anyagent repository.
+  这个站点是公开阅读层。AnyAgent 的工程真源仍在源仓的 `README.md`、`requirements.md`、`todo/*.md`、`docs/**` 与 `packages/anyagent/**`。
 </Info>
 
-## Where to go next
+## 推荐阅读顺序
 
 <Steps>
-  <Step title="Run the quickstart">
-    Follow the local workspace flow in <a href="/quickstart">Quickstart</a>.
+  <Step title="跑通 Quickstart">
+    按 <a href="/quickstart">快速开始</a> 创建 workspace，并启动本地服务。
   </Step>
-  <Step title="Choose the configuration surface">
-    Use <a href="/guides/configuration">Configuration model</a> to decide what belongs in `models.yaml`, `.anyagent/agents/*`, skills, MCP, and plugins.
+  <Step title="看架构总览">
+    阅读 <a href="/concepts/architecture">架构总览</a>，理解配置、runtime、SDK 和安全边界。
   </Step>
-  <Step title="Review production boundaries">
-    Read <a href="/guides/security-boundaries">Security boundaries</a> before enabling command execution, credentials, or external services.
+  <Step title="选择配置面">
+    用 <a href="/guides/configuration">配置模型</a> 判断哪些内容放在 `models.yaml`、`.anyagent/agents/*`、skills、MCP 和 plugins。
+  </Step>
+  <Step title="检查生产边界">
+    在启用 `exec`、credentials 或外部服务前，阅读 <a href="/guides/security-boundaries">安全边界</a>。
   </Step>
 </Steps>

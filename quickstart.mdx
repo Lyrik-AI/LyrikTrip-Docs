@@ -1,26 +1,26 @@
 ---
-title: "Quickstart"
-description: "Create a minimal anyagent workspace and start an OpenAI-compatible Agent Server."
+title: "快速开始"
+description: "创建最小 AnyAgent workspace，并启动 OpenAI-compatible Agent Server。"
 icon: "play"
 ---
 
-Use this flow when you want a local anyagent service with one exposed agent and a generated example skill.
+这条路径适合你想先在本地跑通一个 AnyAgent service：一个 exposed agent、一个生成的 example skill，以及一个可直接请求的 OpenAI-compatible API。
 
-## Prerequisites
+## 前置条件
 
-- Python 3.11 or newer.
-- Access to the package source used by your environment.
-- A working directory where anyagent can create `.anyagent/` configuration files.
+- Python 3.11 或更新版本。
+- 能访问团队使用的 Python package source。
+- 一个允许创建 `.anyagent/` 配置目录的工作目录。
 
-## Install anyagent
+## 安装 anyagent
 
 ```bash
 pip install anyagent
 ```
 
-If your team installs from Yunxiao Packages PyPI, configure the package index through local, server, or pipeline secrets. Do not commit repository passwords into dependency files.
+如果团队从 Yunxiao Packages PyPI 安装，请通过本地、服务器或 CI/CD secrets 配置 package index。不要把 repository password 写进源码仓的 dependency files。
 
-## Create a workspace
+## 创建 workspace
 
 ```bash
 anyagent init --workspace ./my-workspace --with-example-skill
@@ -28,7 +28,7 @@ anyagent doctor --workspace ./my-workspace
 anyagent agent list --workspace ./my-workspace
 ```
 
-`init` creates the workspace layout. `doctor` checks agent packs, skills, MCP configuration, and common security boundary issues. `agent list` shows exposed agents, default models, requested tools, sandbox mode, and spawn boundaries.
+`init` 生成 workspace 结构。`doctor` 检查 agent packs、skills、MCP 配置和常见安全边界问题。`agent list` 展示 exposed agents、default model、requested tools、sandbox mode 和 spawn boundaries。
 
 ```text
 my-workspace/
@@ -51,31 +51,33 @@ my-workspace/
 ```
 
 <Note>
-  The generated `plugins/demo/` plugin is an example. It is not enabled by default and does not become visible to agents unless you request it in the agent tool configuration.
+  生成的 `plugins/demo/` 是插件示例，不会默认启用。除非你在 agent tool configuration 里显式 request，否则 agent 看不到这个工具。
 </Note>
 
-## Start the server
+## 启动服务
+
+本地开发优先用：
 
 ```bash
 anyagent dev --workspace ./my-workspace
 ```
 
-The development command starts a local API and mounts Studio with a development key if no key is configured.
+`dev` 会启动本地 API，并在未配置 key 时使用 development key，同时挂载 Studio。
 
 ```text
 API:    http://127.0.0.1:8787/v1
 Studio: http://127.0.0.1:8787/studio/
 ```
 
-For a service-only process, use:
+如果只需要服务进程，用：
 
 ```bash
 anyagent serve --workspace ./my-workspace --port 8787
 ```
 
-## Call the OpenAI-compatible API
+## 调用 OpenAI-compatible API
 
-Point an OpenAI-compatible client at the local base URL:
+把 OpenAI-compatible client 指向本地 base URL，或直接用 `curl`：
 
 ```bash
 curl http://127.0.0.1:8787/v1/responses \
@@ -87,8 +89,8 @@ curl http://127.0.0.1:8787/v1/responses \
   }'
 ```
 
-## Next steps
+## 下一步
 
-- Use `/guides/configuration` to edit agent instructions, model aliases, skills, tools, and MCP servers.
-- Use `/guides/security-boundaries` before enabling `exec` or server-managed credentials.
-- Use `/reference/architecture-map` to find the repository source documents behind each subsystem.
+- 阅读 `/concepts/architecture` 理解整体架构。
+- 阅读 `/guides/configuration` 编辑 agent instructions、model aliases、skills、tools 和 MCP servers。
+- 在启用 `exec` 或 server-managed credentials 前，阅读 `/guides/security-boundaries`。

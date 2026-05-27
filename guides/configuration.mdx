@@ -1,12 +1,12 @@
 ---
-title: "Configuration model"
-description: "Where anyagent stores models, agent packs, skills, MCP servers, tools, sandbox policy, and plugins."
+title: "配置模型"
+description: "AnyAgent 如何组织 models、agent packs、skills、MCP servers、tools、sandbox policy 和 plugins。"
 icon: "settings"
 ---
 
-anyagent treats configuration as the service boundary. A workspace defines which agents exist, what they can use, and how the server resolves models, tools, skills, MCP servers, credentials, and sandbox policy.
+AnyAgent 把配置视为服务边界。一个 workspace 声明有哪些 agents、它们能使用哪些能力，以及 server 如何解析 models、tools、skills、MCP servers、credentials 和 sandbox policy。
 
-## Workspace layout
+## Workspace 布局
 
 ```text
 my-workspace/
@@ -28,30 +28,30 @@ my-workspace/
       README.md
 ```
 
-## Root files
+## 根目录文件
 
-| File | Owner | Use |
+| 文件 | 归属 | 用途 |
 | --- | --- | --- |
-| `AGENTS.md` | Workspace | Human and agent collaboration instructions. |
-| `models.yaml` | Workspace | Model/provider aliases shared by agents in the workspace. |
-| `.anyagent/` | anyagent | Agent packs, skills, and MCP configuration. |
-| `plugins/` | Application | Optional Tool Runtime plugins. Generated examples are disabled by default. |
+| `AGENTS.md` | Workspace | 人类和 agent 的协作说明。 |
+| `models.yaml` | Workspace | workspace 内共享的 model/provider aliases。 |
+| `.anyagent/` | AnyAgent | Agent packs、skills 和 MCP 配置。 |
+| `plugins/` | Application | 可选 Tool Runtime plugins。生成的示例默认不启用。 |
 
 <Warning>
-  Do not put plaintext API keys or bearer tokens in `mcp.json`, `agent.yaml`, or source-controlled dependency files. Use credential references and server-side secret stores.
+  不要把明文 API keys 或 bearer tokens 写入 `mcp.json`、`agent.yaml` 或源码仓的 dependency files。请使用 credential references 和 server-side secret stores。
 </Warning>
 
-## Agent pack files
+## Agent pack 文件
 
-Each agent lives under `.anyagent/agents/<agent_id>/`.
+每个 agent 放在 `.anyagent/agents/<agent_id>/`。
 
-| File | Purpose |
+| 文件 | 用途 |
 | --- | --- |
-| `AGENTS.md` | Instructions injected into that agent's prompt envelope. |
-| `agent.yaml` | Tools, skills, model default, sandbox policy, exposure, and multi-agent spawn rules. |
-| `mcp.json` | MCP server connections and credential references. |
+| `AGENTS.md` | 注入到该 agent prompt envelope 的行为指令。 |
+| `agent.yaml` | Tools、skills、默认模型、sandbox policy、exposure 和 multi-agent spawn 规则。 |
+| `mcp.json` | MCP server 连接配置和 credential references。 |
 
-## Minimal agent.yaml
+## 最小 agent.yaml
 
 ```yaml
 exposed: true
@@ -70,7 +70,7 @@ multiagent:
 
 ## Model aliases
 
-Keep model/provider aliases at the workspace root in `models.yaml`.
+Model/provider aliases 放在 workspace 根目录的 `models.yaml`。
 
 ```yaml
 models:
@@ -79,11 +79,11 @@ models:
     model: gpt-4.1-mini
 ```
 
-Requests can still pass an explicit `model`. When they do not, the server resolves the agent default through `models.yaml`.
+请求仍然可以显式传入 `model`。如果请求没有传，server 会用 agent default，通过 `models.yaml` 解析到真实 provider 和模型名。
 
 ## MCP servers
 
-`mcp.json` stores MCP connection configuration and credential references.
+`mcp.json` 只放 MCP 连接配置和 credential references。
 
 ```json
 {
@@ -102,4 +102,4 @@ Requests can still pass an explicit `model`. When they do not, the server resolv
 }
 ```
 
-The agent sees the tool surface. The server resolves `credential_id`, injects credentials, applies policy, and records audit data.
+Agent 看到的是 tool surface。Server 负责解析 `credential_id`、注入凭据、应用 policy，并记录 audit data。

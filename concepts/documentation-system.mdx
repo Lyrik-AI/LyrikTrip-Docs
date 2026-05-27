@@ -1,49 +1,57 @@
 ---
-title: "Documentation system"
-description: "How the Mintlify publishing layer relates to anyagent's engineering source of truth."
+title: "文档系统"
+description: "公开 Mintlify 文档如何与 AnyAgent 工程真源协作。"
 icon: "folders"
 ---
 
-anyagent keeps engineering truth and publishing structure separate.
+AnyAgent 把**公开阅读层**和**工程真源**分开维护。
 
-## Layers
+## 分层
 
-| Layer | Path | Purpose |
+| 层级 | 路径 | 用途 |
 | --- | --- | --- |
-| Public reading layer | `Lyrik-AI/LyrikTrip-Docs` | User-facing Mintlify pages, navigation, and publishing configuration. |
-| Project entry | `README.md` | Human quickstart and repository overview. |
-| Requirements | `requirements.md` | What and why. This is the requirements source of truth. |
-| Task state | `todo/*.md` | Progress, evidence, and remaining work. |
-| Long-term docs | `docs/architecture`, `docs/security`, `docs/acceptance`, `docs/performance` | Stable contracts, operating notes, acceptance guides, and design constraints. |
-| Drafts and notes | `docs/_dev`, `docs/_notes` | Temporary design work and research notes. |
-| Code truth | `packages/anyagent/` | Runtime, SDK, protocol, storage, tools, plugins, server, and CLI implementation. |
+| 公开阅读层 | `Lyrik-AI/LyrikTrip-Docs` | 面向用户的 Mintlify pages、navigation 和 publishing configuration。 |
+| 项目入口 | `README.md` | 人类 quickstart 与仓库概览。 |
+| 需求真源 | `requirements.md` | What / why。 |
+| 任务状态 | `todo/*.md` | Progress、evidence 和 remaining work。 |
+| 长期文档 | `docs/architecture`、`docs/security`、`docs/acceptance`、`docs/performance` | Stable contracts、运行说明、验收指南和设计约束。 |
+| 草案与笔记 | `docs/_dev`、`docs/_notes` | 尚未毕业为稳定文档的设计草案和调研笔记。 |
+| 代码真源 | `packages/anyagent/` | Runtime、SDK、protocol、storage、tools、plugins、server 和 CLI implementation。 |
 
-## Publishing rule
+## 发布规则
 
-The Mintlify site should explain and route. It should not fork the source of truth.
+Mintlify 站点负责解释和导航，不复制工程真源。
 
-When a page needs deeper detail, it should name the repository path that owns the contract, such as `docs/architecture/responses-api-sdk-and-server.md` or `docs/security/tool-policy.md`. If the contract changes, update the source file first, then update the Mintlify page if the public reading path changed.
+如果页面需要深入细节，应明确指出源仓路径，例如 `docs/architecture/responses-api-sdk-and-server.md` 或 `docs/security/tool-policy.md`。当 contract 变化时，先更新源仓真源，再更新公开站点的阅读路径。
 
-## Agent maintenance rule
+## Agent 维护规则
 
-When you change public behavior, configuration, SDK types, wire contracts, storage records, security policy, or operating commands:
+当你修改公开行为、配置、SDK 类型、wire contracts、storage records、安全策略或运行命令时：
 
 <Steps>
-  <Step title="Update the closest source of truth">
-    Use `requirements.md`, `todo/*.md`, `docs/**`, or code-level protocol models depending on the change.
+  <Step title="先更新最近的工程真源">
+    根据改动类型更新 `requirements.md`、`todo/*.md`、`docs/**` 或 protocol model。
   </Step>
-  <Step title="Update the publishing layer if users need the change">
-    Edit this public docs repository only when the public reading path needs to mention the changed behavior.
+  <Step title="再更新公开文档">
+    只有当用户阅读路径需要变化时，才编辑 `Lyrik-AI/LyrikTrip-Docs`。
   </Step>
-  <Step title="Validate both layers">
-    Run repository docs checks and Mintlify validation for the changed publishing pages.
+  <Step title="验证两层文档">
+    源仓跑 docs checks；公开文档仓跑 Mintlify validation。
   </Step>
 </Steps>
 
-## Local checks
+## 本地检查
+
+源仓：
 
 ```bash
 python3 scripts/docs/check.py --root .
 python3 scripts/docs/check.py --root . --check-index
-cd mintlify && mint validate
+```
+
+公开文档仓：
+
+```bash
+mint validate
+mint broken-links --check-anchors
 ```

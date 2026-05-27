@@ -1,0 +1,116 @@
+---
+title: "架构总览"
+description: "AnyAgent 的配置层、Server Core、SDK、Tool Runtime、存储与安全边界。"
+icon: "network"
+---
+
+AnyAgent 的核心思路是 **configuration-first Agent infrastructure**：业务仓库声明 agent 的行为、工具和边界，AnyAgent 负责把这些配置变成 OpenAI-compatible 的服务、SDK 事件流和可治理的工具执行。
+
+## 总体分层
+
+```mermaid placement="top-left"
+%%{init: {'flowchart': {'defaultRenderer': 'elk'}}}%%
+flowchart TB
+    User[用户 / OpenAI SDK client] --> API[Agent Server\n/v1/responses]
+
+    subgraph Workspace[业务 workspace]
+        Root[AGENTS.md\nmodels.yaml]
+        Pack[.anyagent/agents/<agent_id>\nAGENTS.md / agent.yaml / mcp.json]
+        Skills[.anyagent/skills/*\nSKILL.md]
+        Plugins[plugins/*\nTool Runtime plugins]
+    end
+
+    subgraph Core[AnyAgent Core]
+        Protocol[protocol SSOT\nResponses / Events / Sandbox / Tool contracts]
+        Runtime[agent runtime\nloop / routing / stage events]
+        Security[security boundary\nCredential Vault / Tool Policy / Audit]
+        Storage[storage contracts\nSession / Run / Event / Lock]
+    end
+
+    subgraph Tools[工具执行层]
+        Builtin[Built-in tools\ncore.web_fetch / exec]
+        MCP[MCP servers\nstreamable HTTP / stdio]
+        ToolRuntime[Tool Runtime\nin-process or split service]
+        Sandbox[Sandbox backend\nopensandbox / external / local-unsafe]
+    end
+
+    API --> Runtime
+    Workspace --> Runtime
+    Runtime --> Protocol
+    Runtime --> Security
+    Runtime --> Storage
+    Runtime --> ToolRuntime
+    ToolRuntime --> Builtin
+    ToolRuntime --> MCP
+    Builtin --> Sandbox
+```
+
+## 一次请求如何执行
+
+```mermaid placement="top-left"
+sequenceDiagram
+    participant Client as Client / SDK
+    participant Server as Agent Server
+    participant Runtime as Agent Runtime
+    participant Policy as Tool Policy + Credential Vault
+    participant TR as Tool Runtime
+    participant Store as Event Store
+
+    Client->>Server: POST /v1/responses
+    Server->>Runtime: resolve agent_id + model alias
+    Runtime->>Store: create Run + append input event
+    Runtime-->>Client: SSE stage event
+    Runtime->>Policy: authorize tool + resolve credential_id
+    Policy-->>Runtime: injected tool request
+    Runtime->>TR: execute tool call
+    TR-->>Runtime: tool result
+    Runtime->>Store: append tool/result/output events
+    Runtime-->>Client: streaming response events
+    Runtime-->>Server: final response
+```
+
+## 配置、能力与安全边界
+
+```mermaid placement="top-left"
+flowchart LR
+    subgraph AgentVisible[Agent 可见]
+        ToolNames[tool names]
+        SkillText[skill instructions]
+        CredentialRef[credential_id]
+        MCPManifest[MCP tool surface]
+    end
+
+    subgraph ServerControlled[Server 控制]
+        SecretValue[secret value]
+        Injection[auth injection]
+        Policy[tool policy]
+        Audit[audit log]
+        SandboxPolicy[sandbox policy]
+    end
+
+    ToolNames --> Policy
+    SkillText --> Policy
+    CredentialRef --> SecretValue
+    SecretValue --> Injection
+    MCPManifest --> Injection
+    Policy --> Audit
+    SandboxPolicy --> Audit
+```
+
+<Warning>
+  Agent 不应直接持有明文 token、API key 或生产凭据。Agent 看到的是 `credential_id` 和已批准的 tool surface，server 负责解析、注入、审计与隔离。
+</Warning>
+
+## 关键设计原则
+
+- **Protocol-first**：公开 API、wire format、事件、SDK 类型和 tool contract 都回到 `anyagent.protocol.*`。
+- **Boundary parsing**：HTTP、CLI、SDK、存储、文件和第三方输出进入系统边界时先校验和归一化。
+- **Strict boundaries**：配置、协议、runtime、工具执行、凭证和应用示例各有归属，不复制 contract。
+- **Gradual disclosure**：默认暴露能力边界和下一步入口，schema、raw tool 和调试细节按需展开。
+
+## 继续阅读
+
+- `/guides/configuration`：workspace、agent pack、models、MCP 与 plugins 如何组织。
+- `/guides/agent-server`：本地 runtime、external storage 和 Tool Runtime split。
+- `/guides/security-boundaries`：credentials、tool policy、audit 与 sandbox。
+- `/reference/architecture-map`：从公开概念跳到源仓真源文档与实现目录。

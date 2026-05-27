@@ -1,30 +1,30 @@
 ---
 title: "Agent Server runtime"
-description: "How local and production anyagent server modes fit together."
+description: "AnyAgent 的本地运行、外置存储、Tool Runtime 拆分与生产运行路径。"
 icon: "server"
 ---
 
-anyagent starts with a local, single-process runtime and can move toward external storage, independent Tool Runtime processes, and production operation commands as the deployment grows.
+AnyAgent 从本地单进程 runtime 起步。随着部署规模扩大，你可以逐步切到 external storage、独立 Tool Runtime process 和 production operation commands。
 
-## Local development
+## 本地开发
 
-Use `anyagent dev` when you want a local API and Studio with development defaults.
+需要本地 API 和 Studio 时，用 `anyagent dev`：
 
 ```bash
 anyagent dev --workspace ./my-workspace
 ```
 
-Use `anyagent serve` when you want the service process without the development wrapper.
+只需要服务进程时，用 `anyagent serve`：
 
 ```bash
 anyagent serve --workspace ./my-workspace --port 8787
 ```
 
-The default local path uses in-memory storage and an in-process Tool Runtime. This is the shortest path for application demos and local validation.
+默认本地路径使用 in-memory storage 和 in-process Tool Runtime。这是业务 demo 和本地验证的最短路径。
 
 ## External storage
 
-Production deployments can move Session, Run, and Event stores to external backends.
+生产部署可以把 Session、Run 和 Event stores 放到外部 backend。
 
 ```bash
 POSTGRES_DSN=postgresql://anyagent:anyagent@127.0.0.1:5432/anyagent \
@@ -38,14 +38,14 @@ SESSION_STORE_BACKEND=external \
 anyagent serve --workspace ./my-workspace --session-lock-backend redis
 ```
 
-Run storage migrations before serving traffic:
+服务接流量前先运行 storage migration：
 
 ```bash
 POSTGRES_DSN=postgresql://anyagent:anyagent@127.0.0.1:5432/anyagent \
 anyagent storage migrate
 ```
 
-Check health through the admin path:
+用 admin command 检查存储健康：
 
 ```bash
 ADMIN_API_KEY=admin-key anyagent storage health --admin-key admin-key
@@ -53,16 +53,28 @@ ADMIN_API_KEY=admin-key anyagent storage health --admin-key admin-key
 
 ## Tool Runtime split
 
-The local server can execute tools in-process. Deployments that need independent scaling, stronger isolation, or dedicated execution pools can split the Agent API and Tool Runtime processes.
+本地 server 可以 in-process 执行工具。需要独立扩缩容、更强隔离或专用执行池时，可以拆分 Agent API 和 Tool Runtime。
 
 ```bash
 anyagent agent-api serve --workspace ./my-workspace
 anyagent tool-runtime serve --workspace ./my-workspace
 ```
 
-## Source documents
+## 运行时关系图
 
-Use these repository documents for implementation-level details:
+```mermaid placement="top-left"
+flowchart LR
+    Client[Client / SDK] --> API[Agent API]
+    API --> Runtime[Agent Runtime]
+    Runtime --> Store[(Session / Run / Event stores)]
+    Runtime --> TR[Tool Runtime]
+    TR --> Tools[Built-in tools / MCP / plugins]
+    Tools --> Sandbox[Sandbox backend]
+```
+
+## 源仓真源文档
+
+实现细节以源仓这些文档为准：
 
 - `docs/architecture/responses-api-sdk-and-server.md`
 - `docs/architecture/stateless-agent-service-architecture.md`
