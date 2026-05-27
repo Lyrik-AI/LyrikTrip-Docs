@@ -1,40 +1,139 @@
 ---
-title: "架构索引"
-description: "从 AnyAgent 公开概念映射到源仓真源文档与实现目录。"
+title: "架构导航"
+description: "按读者问题定位 AnyAgent 架构页面、源仓真源与实现区域。"
 icon: "map"
 ---
 
-这张表用于从公开概念跳到源仓中真正拥有细节的文档和实现位置。
+这个页面用于回答一个问题：当你想理解 AnyAgent 的某个能力时，应该先读哪一页，再去源仓哪里核对细节。
 
-## 核心概念映射
+<Info>
+  公开站点负责解释概念和阅读路径。协议、代码、任务状态和实现证据以 AnyAgent 源仓为准。
+</Info>
 
-| 概念 | 源仓真源文档 | 实现区域 |
-| --- | --- | --- |
-| OpenAI-compatible API 与 SDK lanes | `docs/architecture/responses-api-sdk-and-server.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/agent_api_client.py` |
-| SDK public surface | `docs/architecture/sdk-public-surface.md` | `packages/anyagent/src/anyagent/types`、`packages/anyagent/src/anyagent/agent_api_client.py` |
-| Agent packs | `README.md`、`docs/architecture/roadmap.md` | `packages/anyagent/src/anyagent/agent_packs.py` |
-| Runtime entities | `docs/architecture/agent-server-runtime-entities.md` | `packages/anyagent/src/anyagent/storage`、`packages/anyagent/src/anyagent/gateway` |
-| Stateless service semantics | `docs/architecture/stateless-agent-service-architecture.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/storage` |
-| Storage contract | `docs/architecture/storage-minimal-design.md` | `packages/anyagent/src/anyagent/storage` |
-| Tool Runtime | `docs/architecture/skills-tool-runtime-interaction.md` | `packages/anyagent/src/anyagent/tool_runtime` |
-| Skills | `docs/architecture/decisions/skills-selection-policy.md` | `packages/anyagent/src/anyagent/skills` |
-| Security 与 credentials | `docs/security/*` | `packages/anyagent/src/anyagent/server/security` |
-| Sandbox policy | `docs/security/sandbox-security.md` | `packages/anyagent/src/anyagent/protocol/sandbox.py`、`packages/anyagent/src/anyagent/server/sandbox` |
-| Testing strategy | `docs/architecture/testing-strategy.md` | `tests/`、`scripts/ci/` |
+## 先从这些问题开始
 
-## 工作追踪
+<Columns cols={2}>
+  <Card title="整体架构如何分层？" icon="network" href="/concepts/architecture" cta="查看总览">
+    从 workspace 配置、Agent Server、SDK、Tool Runtime、存储和安全边界建立全局地图。
+  </Card>
+  <Card title="如何配置一个 agent？" icon="settings" href="/guides/configuration" cta="查看配置">
+    理解 `.anyagent/`、agent pack、models、MCP、skills 和 plugins 的归属。
+  </Card>
+  <Card title="Agent Server 怎么运行？" icon="server" href="/guides/agent-server" cta="查看 runtime">
+    了解 OpenAI-compatible endpoint、本地 runtime、external storage 和 split Tool Runtime。
+  </Card>
+  <Card title="安全边界在哪里？" icon="shield-check" href="/guides/security-boundaries" cta="查看安全">
+    核对 credentials、tool policy、audit、sandbox 和 agent 可见信息的分界。
+  </Card>
+</Columns>
 
-| 路径 | 用途 |
-| --- | --- |
-| `requirements.md` | Requirements and constraints。 |
-| `todo/*.md` | 当前状态、实现证据和剩余工作。 |
-| `docs/_dev/**` | 尚未毕业到 stable docs 的 drafts。 |
-| `docs/_notes/**` | Research notes，不作为 contract 真源。 |
+## 源仓真源入口
 
-## 源仓检查命令
+<Columns cols={2}>
+  <Card
+    title="API 与 SDK lanes"
+    icon="route"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/architecture/responses-api-sdk-and-server.md"
+    cta="打开真源文档"
+  >
+    OpenAI-compatible API、SDK lane、server lane 和二者的边界。
+  </Card>
+  <Card
+    title="SDK public surface"
+    icon="package"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/architecture/sdk-public-surface.md"
+    cta="打开真源文档"
+  >
+    SDK 对外类型、client surface、事件消费方式和兼容性约束。
+  </Card>
+  <Card
+    title="Runtime entities"
+    icon="boxes"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/architecture/agent-server-runtime-entities.md"
+    cta="打开真源文档"
+  >
+    Session、Run、Event、store 和 gateway 等 runtime 实体。
+  </Card>
+  <Card
+    title="Storage contract"
+    icon="database"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/architecture/storage-minimal-design.md"
+    cta="打开真源文档"
+  >
+    最小持久化接口、事件存储、锁和外置存储适配边界。
+  </Card>
+  <Card
+    title="Tool Runtime"
+    icon="wrench"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/architecture/skills-tool-runtime-interaction.md"
+    cta="打开真源文档"
+  >
+    skills、MCP、built-in tools、plugin tools 和工具执行层的关系。
+  </Card>
+  <Card
+    title="Sandbox policy"
+    icon="shield"
+    href="https://github.com/Lyrik-AI/AnyAgent/blob/main/docs/security/sandbox-security.md"
+    cta="打开真源文档"
+  >
+    sandbox backend、文件系统隔离、命令执行边界和风险模型。
+  </Card>
+</Columns>
 
-```bash
-python3 scripts/docs/index.py --root .
-python3 scripts/docs/check.py --root .
-python3 scripts/anyagent_progress.py --root .
-```
+## 按概念定位实现
+
+<AccordionGroup>
+  <Accordion title="API、SDK 与 protocol">
+    | 概念 | 真源文档 | 实现区域 |
+    | --- | --- | --- |
+    | OpenAI-compatible API 与 SDK lanes | `docs/architecture/responses-api-sdk-and-server.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/agent_api_client.py` |
+    | SDK public surface | `docs/architecture/sdk-public-surface.md` | `packages/anyagent/src/anyagent/types`、`packages/anyagent/src/anyagent/agent_api_client.py` |
+  </Accordion>
+
+  <Accordion title="Agent 配置与 runtime">
+    | 概念 | 真源文档 | 实现区域 |
+    | --- | --- | --- |
+    | Agent packs | `README.md`、`docs/architecture/roadmap.md` | `packages/anyagent/src/anyagent/agent_packs.py` |
+    | Runtime entities | `docs/architecture/agent-server-runtime-entities.md` | `packages/anyagent/src/anyagent/storage`、`packages/anyagent/src/anyagent/gateway` |
+    | Stateless service semantics | `docs/architecture/stateless-agent-service-architecture.md` | `packages/anyagent/src/anyagent/server`、`packages/anyagent/src/anyagent/storage` |
+  </Accordion>
+
+  <Accordion title="Storage、tools 与 skills">
+    | 概念 | 真源文档 | 实现区域 |
+    | --- | --- | --- |
+    | Storage contract | `docs/architecture/storage-minimal-design.md` | `packages/anyagent/src/anyagent/storage` |
+    | Tool Runtime | `docs/architecture/skills-tool-runtime-interaction.md` | `packages/anyagent/src/anyagent/tool_runtime` |
+    | Skills | `docs/architecture/decisions/skills-selection-policy.md` | `packages/anyagent/src/anyagent/skills` |
+  </Accordion>
+
+  <Accordion title="Security、sandbox 与 testing">
+    | 概念 | 真源文档 | 实现区域 |
+    | --- | --- | --- |
+    | Security 与 credentials | `docs/security/*` | `packages/anyagent/src/anyagent/server/security` |
+    | Sandbox policy | `docs/security/sandbox-security.md` | `packages/anyagent/src/anyagent/protocol/sandbox.py`、`packages/anyagent/src/anyagent/server/sandbox` |
+    | Testing strategy | `docs/architecture/testing-strategy.md` | `tests/`、`scripts/ci/` |
+  </Accordion>
+</AccordionGroup>
+
+## 维护者参考
+
+<AccordionGroup>
+  <Accordion title="工作追踪文件">
+    | 路径 | 用途 |
+    | --- | --- |
+    | `requirements.md` | Requirements and constraints。 |
+    | `todo/*.md` | 当前状态、实现证据和剩余工作。 |
+    | `docs/_dev/**` | 尚未毕业到 stable docs 的 drafts。 |
+    | `docs/_notes/**` | Research notes，不作为 contract 真源。 |
+  </Accordion>
+
+  <Accordion title="源仓检查命令">
+    在 AnyAgent 源仓根目录运行：
+
+    ```bash
+    python3 scripts/docs/index.py --root .
+    python3 scripts/docs/check.py --root .
+    python3 scripts/anyagent_progress.py --root .
+    ```
+  </Accordion>
+</AccordionGroup>
