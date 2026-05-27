@@ -1,0 +1,55 @@
+---
+title: "Mintlify publishing"
+description: "How to connect this repository's Mintlify publishing layer to a Mintlify project."
+icon: "cloud-upload"
+---
+
+The Mintlify publishing root for AnyAgent is the root of the public `Lyrik-AI/LyrikTrip-Docs` repository.
+
+## Dashboard setup
+
+In the Mintlify dashboard project, configure the Git source to use:
+
+| Setting | Value |
+| --- | --- |
+| Repository | `Lyrik-AI/LyrikTrip-Docs` |
+| Branch | The branch you want to publish |
+| Docs directory | Repository root |
+| Config file | `docs.json` |
+
+If you are using an existing project such as `https://app.mintlify.com/loap/loap`, open its Git settings and connect it to `Lyrik-AI/LyrikTrip-Docs` on the branch you want to publish.
+
+<Info>
+  This repository is already the public documentation root, so no subdirectory is needed in Mintlify Git settings.
+</Info>
+
+## Local validation
+
+Run validation from the publishing root:
+
+```bash
+cd mintlify
+mint validate
+mint broken-links --check-anchors
+```
+
+Use a local preview while editing:
+
+```bash
+cd mintlify
+mint dev --no-open
+```
+
+## Maintenance checklist
+
+<Steps>
+  <Step title="Update source truth first">
+    Change `README.md`, `requirements.md`, `todo/*.md`, `docs/**`, or code protocol models before changing public pages.
+  </Step>
+  <Step title="Update public navigation">
+    Add new public pages to `docs.json`; pages not in navigation are hidden from sitemap, search, and MCP results by default.
+  </Step>
+  <Step title="Validate locally">
+    Run repository docs checks and Mintlify validation before connecting or redeploying.
+  </Step>
+</Steps>

@@ -1,0 +1,105 @@
+---
+title: "Configuration model"
+description: "Where anyagent stores models, agent packs, skills, MCP servers, tools, sandbox policy, and plugins."
+icon: "settings"
+---
+
+anyagent treats configuration as the service boundary. A workspace defines which agents exist, what they can use, and how the server resolves models, tools, skills, MCP servers, credentials, and sandbox policy.
+
+## Workspace layout
+
+```text
+my-workspace/
+  AGENTS.md
+  models.yaml
+  .anyagent/
+    agents/
+      main/
+        AGENTS.md
+        agent.yaml
+        mcp.json
+    skills/
+      example-skill/
+        SKILL.md
+  plugins/
+    demo/
+      plugin.json
+      plugin.py
+      README.md
+```
+
+## Root files
+
+| File | Owner | Use |
+| --- | --- | --- |
+| `AGENTS.md` | Workspace | Human and agent collaboration instructions. |
+| `models.yaml` | Workspace | Model/provider aliases shared by agents in the workspace. |
+| `.anyagent/` | anyagent | Agent packs, skills, and MCP configuration. |
+| `plugins/` | Application | Optional Tool Runtime plugins. Generated examples are disabled by default. |
+
+<Warning>
+  Do not put plaintext API keys or bearer tokens in `mcp.json`, `agent.yaml`, or source-controlled dependency files. Use credential references and server-side secret stores.
+</Warning>
+
+## Agent pack files
+
+Each agent lives under `.anyagent/agents/<agent_id>/`.
+
+| File | Purpose |
+| --- | --- |
+| `AGENTS.md` | Instructions injected into that agent's prompt envelope. |
+| `agent.yaml` | Tools, skills, model default, sandbox policy, exposure, and multi-agent spawn rules. |
+| `mcp.json` | MCP server connections and credential references. |
+
+## Minimal agent.yaml
+
+```yaml
+exposed: true
+model:
+  default: fast
+tools:
+  requested_tool_names:
+    - core.web_fetch
+skills:
+  default_selected: []
+sandbox:
+  mode: "disabled"
+multiagent:
+  spawn_allow_agent_ids: ["main"]
+```
+
+## Model aliases
+
+Keep model/provider aliases at the workspace root in `models.yaml`.
+
+```yaml
+models:
+  fast:
+    provider: openai
+    model: gpt-4.1-mini
+```
+
+Requests can still pass an explicit `model`. When they do not, the server resolves the agent default through `models.yaml`.
+
+## MCP servers
+
+`mcp.json` stores MCP connection configuration and credential references.
+
+```json
+{
+  "mcpServers": {
+    "docs": {
+      "url": "https://example.com/mcp",
+      "transport": "streamable_http",
+      "auth": {
+        "credential_id": "cred_docs_mcp",
+        "ref_kind": "bearer_token",
+        "injection": "header:Authorization",
+        "format": "Bearer {value}"
+      }
+    }
+  }
+}
+```
+
+The agent sees the tool surface. The server resolves `credential_id`, injects credentials, applies policy, and records audit data.

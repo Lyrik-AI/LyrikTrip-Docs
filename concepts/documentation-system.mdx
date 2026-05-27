@@ -1,0 +1,49 @@
+---
+title: "Documentation system"
+description: "How the Mintlify publishing layer relates to anyagent's engineering source of truth."
+icon: "folders"
+---
+
+anyagent keeps engineering truth and publishing structure separate.
+
+## Layers
+
+| Layer | Path | Purpose |
+| --- | --- | --- |
+| Public reading layer | `Lyrik-AI/LyrikTrip-Docs` | User-facing Mintlify pages, navigation, and publishing configuration. |
+| Project entry | `README.md` | Human quickstart and repository overview. |
+| Requirements | `requirements.md` | What and why. This is the requirements source of truth. |
+| Task state | `todo/*.md` | Progress, evidence, and remaining work. |
+| Long-term docs | `docs/architecture`, `docs/security`, `docs/acceptance`, `docs/performance` | Stable contracts, operating notes, acceptance guides, and design constraints. |
+| Drafts and notes | `docs/_dev`, `docs/_notes` | Temporary design work and research notes. |
+| Code truth | `packages/anyagent/` | Runtime, SDK, protocol, storage, tools, plugins, server, and CLI implementation. |
+
+## Publishing rule
+
+The Mintlify site should explain and route. It should not fork the source of truth.
+
+When a page needs deeper detail, it should name the repository path that owns the contract, such as `docs/architecture/responses-api-sdk-and-server.md` or `docs/security/tool-policy.md`. If the contract changes, update the source file first, then update the Mintlify page if the public reading path changed.
+
+## Agent maintenance rule
+
+When you change public behavior, configuration, SDK types, wire contracts, storage records, security policy, or operating commands:
+
+<Steps>
+  <Step title="Update the closest source of truth">
+    Use `requirements.md`, `todo/*.md`, `docs/**`, or code-level protocol models depending on the change.
+  </Step>
+  <Step title="Update the publishing layer if users need the change">
+    Edit this public docs repository only when the public reading path needs to mention the changed behavior.
+  </Step>
+  <Step title="Validate both layers">
+    Run repository docs checks and Mintlify validation for the changed publishing pages.
+  </Step>
+</Steps>
+
+## Local checks
+
+```bash
+python3 scripts/docs/check.py --root .
+python3 scripts/docs/check.py --root . --check-index
+cd mintlify && mint validate
+```

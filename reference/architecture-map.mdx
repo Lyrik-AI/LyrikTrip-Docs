@@ -1,0 +1,40 @@
+---
+title: "Architecture map"
+description: "A public map from anyagent concepts to repository source documents and implementation areas."
+icon: "map"
+---
+
+Use this map to move from a public concept to the repository source document that owns the details.
+
+## Core concepts
+
+| Concept | Source document | Implementation area |
+| --- | --- | --- |
+| OpenAI-compatible API and SDK lanes | `docs/architecture/responses-api-sdk-and-server.md` | `packages/anyagent/src/anyagent/server`, `packages/anyagent/src/anyagent/agent_api_client.py` |
+| SDK public surface | `docs/architecture/sdk-public-surface.md` | `packages/anyagent/src/anyagent/types`, `packages/anyagent/src/anyagent/agent_api_client.py` |
+| Agent packs | `README.md`, `docs/architecture/roadmap.md` | `packages/anyagent/src/anyagent/agent_packs.py` |
+| Runtime entities | `docs/architecture/agent-server-runtime-entities.md` | `packages/anyagent/src/anyagent/storage`, `packages/anyagent/src/anyagent/gateway` |
+| Stateless service semantics | `docs/architecture/stateless-agent-service-architecture.md` | `packages/anyagent/src/anyagent/server`, `packages/anyagent/src/anyagent/storage` |
+| Storage contract | `docs/architecture/storage-minimal-design.md` | `packages/anyagent/src/anyagent/storage` |
+| Tool Runtime | `docs/architecture/skills-tool-runtime-interaction.md` | `packages/anyagent/src/anyagent/tool_runtime` |
+| Skills | `docs/architecture/decisions/skills-selection-policy.md` | `packages/anyagent/src/anyagent/skills` |
+| Security and credentials | `docs/security/*` | `packages/anyagent/src/anyagent/server/security` |
+| Sandbox policy | `docs/security/sandbox-security.md` | `packages/anyagent/src/anyagent/protocol/sandbox.py`, `packages/anyagent/src/anyagent/server/sandbox` |
+| Testing strategy | `docs/architecture/testing-strategy.md` | `tests/`, `scripts/ci/` |
+
+## Work tracking
+
+| Path | Use |
+| --- | --- |
+| `requirements.md` | Requirements and constraints. |
+| `todo/*.md` | Current status, task evidence, and remaining work. |
+| `docs/_dev/**` | Drafts that have not graduated to stable docs. |
+| `docs/_notes/**` | Research notes, not source-of-truth contracts. |
+
+## Repository checks
+
+```bash
+python3 scripts/docs/index.py --root .
+python3 scripts/docs/check.py --root .
+python3 scripts/anyagent_progress.py --root .
+```

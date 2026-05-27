@@ -1,133 +1,42 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
-icon: 'star'
+title: "anyagent"
+description: "Configuration-first Agent Server core and SDK for OpenAI-compatible agent services."
+icon: "bot"
 ---
 
-## Setting up
-
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+anyagent is a configuration-first Agent Server core and SDK. It starts an OpenAI Responses API-compatible service from workspace files such as `AGENTS.md`, `agent.yaml`, and `mcp.json`, without requiring application teams to write their own server shell.
 
 <Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Start a workspace" icon="rocket" href="/quickstart">
+    Generate a minimal `.anyagent/` workspace, inspect it, and run a local Agent Server.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Understand the docs system" icon="folders" href="/concepts/documentation-system">
+    See how the Mintlify publishing view relates to the repository's source-of-truth docs.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## What anyagent provides
 
-Everything you need to create world-class documentation.
+- A built-in Agent Server with `POST /v1/responses` and streaming events.
+- A Python SDK with OpenAI-compatible access and anyagent-specific event helpers.
+- Agent packs under `.anyagent/agents/<agent_id>/` for instructions, tools, skills, MCP servers, sandbox policy, and multi-agent boundaries.
+- A server-managed security model where agents see resource references, while credentials and tool policy stay behind the server boundary.
+- A path from local in-process runtime to external storage, independent Tool Runtime, and production operation commands.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+<Info>
+  This Mintlify site is the public reading layer. The engineering source of truth remains in `README.md`, `requirements.md`, `todo/*.md`, and `docs/**` in the anyagent repository.
+</Info>
 
-## Make your content agent ready
+## Where to go next
 
-Make your docs work for humans and AI agents alike.
-
-<Columns cols={2}>
-  <Card
-    title="Prompt component"
-    icon="robot"
-    href="/agent-ready/prompt"
-  >
-    Embed shareable AI prompts readers can copy or open in Cursor.
-  </Card>
-  <Card
-    title="Visibility"
-    icon="eye"
-    href="/agent-ready/visibility"
-  >
-    Show different content to humans and agents reading your docs.
-  </Card>
-  <Card
-    title="Contextual menu"
-    icon="bolt"
-    href="/agent-ready/contextual"
-  >
-    Give readers one-click access to Claude, ChatGPT, Cursor, and more.
-  </Card>
-  <Card
-    title="AI coding tools"
-    icon="wand-magic-sparkles"
-    href="/ai-tools/claude-code"
-  >
-    Set up Claude Code, Cursor, or Windsurf with Mintlify's skill.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Run the quickstart">
+    Follow the local workspace flow in <a href="/quickstart">Quickstart</a>.
+  </Step>
+  <Step title="Choose the configuration surface">
+    Use <a href="/guides/configuration">Configuration model</a> to decide what belongs in `models.yaml`, `.anyagent/agents/*`, skills, MCP, and plugins.
+  </Step>
+  <Step title="Review production boundaries">
+    Read <a href="/guides/security-boundaries">Security boundaries</a> before enabling command execution, credentials, or external services.
+  </Step>
+</Steps>

@@ -1,0 +1,71 @@
+---
+title: "Agent Server runtime"
+description: "How local and production anyagent server modes fit together."
+icon: "server"
+---
+
+anyagent starts with a local, single-process runtime and can move toward external storage, independent Tool Runtime processes, and production operation commands as the deployment grows.
+
+## Local development
+
+Use `anyagent dev` when you want a local API and Studio with development defaults.
+
+```bash
+anyagent dev --workspace ./my-workspace
+```
+
+Use `anyagent serve` when you want the service process without the development wrapper.
+
+```bash
+anyagent serve --workspace ./my-workspace --port 8787
+```
+
+The default local path uses in-memory storage and an in-process Tool Runtime. This is the shortest path for application demos and local validation.
+
+## External storage
+
+Production deployments can move Session, Run, and Event stores to external backends.
+
+```bash
+POSTGRES_DSN=postgresql://anyagent:anyagent@127.0.0.1:5432/anyagent \
+REDIS_DSN=redis://127.0.0.1:6379/0 \
+REDIS_NAMESPACE=anyagent \
+POSTGRES_SCHEMA_POLICY=migrate \
+STORAGE_MODE=external \
+EVENT_STORE_BACKEND=external \
+RUN_STORE_BACKEND=external \
+SESSION_STORE_BACKEND=external \
+anyagent serve --workspace ./my-workspace --session-lock-backend redis
+```
+
+Run storage migrations before serving traffic:
+
+```bash
+POSTGRES_DSN=postgresql://anyagent:anyagent@127.0.0.1:5432/anyagent \
+anyagent storage migrate
+```
+
+Check health through the admin path:
+
+```bash
+ADMIN_API_KEY=admin-key anyagent storage health --admin-key admin-key
+```
+
+## Tool Runtime split
+
+The local server can execute tools in-process. Deployments that need independent scaling, stronger isolation, or dedicated execution pools can split the Agent API and Tool Runtime processes.
+
+```bash
+anyagent agent-api serve --workspace ./my-workspace
+anyagent tool-runtime serve --workspace ./my-workspace
+```
+
+## Source documents
+
+Use these repository documents for implementation-level details:
+
+- `docs/architecture/responses-api-sdk-and-server.md`
+- `docs/architecture/stateless-agent-service-architecture.md`
+- `docs/architecture/storage-minimal-design.md`
+- `docs/architecture/agent-server-runtime-entities.md`
+- `docs/acceptance/README.md`

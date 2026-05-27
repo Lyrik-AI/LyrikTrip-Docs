@@ -1,0 +1,61 @@
+---
+title: "Security boundaries"
+description: "How anyagent separates agent-visible capabilities from server-controlled credentials, tools, and sandbox policy."
+icon: "shield-check"
+---
+
+anyagent's default security model is: agents can see resource references and invoke approved capabilities, but the server owns credentials, tool policy, sandbox routing, audit records, and sensitive injection.
+
+## Boundary model
+
+| Boundary | Agent sees | Server owns |
+| --- | --- | --- |
+| Credentials | `credential_id` references | Secret resolution and injection |
+| MCP servers | Tool surface and server names | Auth headers, token format, credential lookup |
+| Tools | Approved tool names | Tool policy, runtime routing, audit logging |
+| Command execution | `exec` capability if enabled | Sandbox backend, session filesystem, egress policy |
+| Storage | Stable IDs and resumable events | Session, Run, Event, locks, dedupe, retention |
+
+## Sandbox modes
+
+Use command execution only when the agent actually needs it.
+
+```yaml
+tools:
+  requested_tool_names:
+    - exec
+sandbox:
+  mode: "local-unsafe"
+```
+
+`local-unsafe` is for trusted local development. Production deployments should use an isolated backend such as `opensandbox` or `external`.
+
+<Warning>
+  A workspace that only uses MCP HTTP tools or `core.web_fetch` does not need local command execution. Keep sandbox policy disabled until a workflow requires it.
+</Warning>
+
+## Credential references
+
+Keep secrets out of source-controlled files. MCP config should reference a server-side credential:
+
+```json
+{
+  "auth": {
+    "credential_id": "cred_docs_mcp",
+    "ref_kind": "bearer_token",
+    "injection": "header:Authorization",
+    "format": "Bearer {value}"
+  }
+}
+```
+
+## Audit and policy documents
+
+Use these repository documents as the detailed source of truth:
+
+- `docs/security/security-threat-model.md`
+- `docs/security/credential-vault.md`
+- `docs/security/tool-policy.md`
+- `docs/security/audit-logging.md`
+- `docs/security/sandbox-security.md`
+- `docs/architecture/sandbox-session-filesystem-design.md`

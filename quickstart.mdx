@@ -1,81 +1,94 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
-icon: 'rocket'
+description: "Create a minimal anyagent workspace and start an OpenAI-compatible Agent Server."
+icon: "play"
 ---
 
-## Get started in three steps
+Use this flow when you want a local anyagent service with one exposed agent and a generated example skill.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+- Python 3.11 or newer.
+- Access to the package source used by your environment.
+- A working directory where anyagent can create `.anyagent/` configuration files.
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+## Install anyagent
 
-### Step 2: Deploy your changes
+```bash
+pip install anyagent
+```
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+If your team installs from Yunxiao Packages PyPI, configure the package index through local, server, or pipeline secrets. Do not commit repository passwords into dependency files.
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+## Create a workspace
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+```bash
+anyagent init --workspace ./my-workspace --with-example-skill
+anyagent doctor --workspace ./my-workspace
+anyagent agent list --workspace ./my-workspace
+```
 
-### Step 3: Go live
+`init` creates the workspace layout. `doctor` checks agent packs, skills, MCP configuration, and common security boundary issues. `agent list` shows exposed agents, default models, requested tools, sandbox mode, and spawn boundaries.
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+```text
+my-workspace/
+  AGENTS.md
+  models.yaml
+  .anyagent/
+    agents/
+      main/
+        AGENTS.md
+        agent.yaml
+        mcp.json
+    skills/
+      example-skill/
+        SKILL.md
+  plugins/
+    demo/
+      plugin.json
+      plugin.py
+      README.md
+```
+
+<Note>
+  The generated `plugins/demo/` plugin is an example. It is not enabled by default and does not become visible to agents unless you request it in the agent tool configuration.
+</Note>
+
+## Start the server
+
+```bash
+anyagent dev --workspace ./my-workspace
+```
+
+The development command starts a local API and mounts Studio with a development key if no key is configured.
+
+```text
+API:    http://127.0.0.1:8787/v1
+Studio: http://127.0.0.1:8787/studio/
+```
+
+For a service-only process, use:
+
+```bash
+anyagent serve --workspace ./my-workspace --port 8787
+```
+
+## Call the OpenAI-compatible API
+
+Point an OpenAI-compatible client at the local base URL:
+
+```bash
+curl http://127.0.0.1:8787/v1/responses \
+  -H "Authorization: Bearer anyagent-dev-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "default",
+    "input": "Say hello from anyagent."
+  }'
+```
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+- Use `/guides/configuration` to edit agent instructions, model aliases, skills, tools, and MCP servers.
+- Use `/guides/security-boundaries` before enabling `exec` or server-managed credentials.
+- Use `/reference/architecture-map` to find the repository source documents behind each subsystem.
